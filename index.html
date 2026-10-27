@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exactly As Requested</title>
+
+  <!-- Two typefaces on purpose:
+       JetBrains Mono = the machine (stream, face, numbers)
+       DM Sans        = the friendly app (chat box, buttons) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- You are looking behind the curtain. Everything this page "says" is decoded
+       twice: in the browser console, and in a data-decoded attribute on each
+       answer (open the Elements panel and look). The AI is not on a server.
+       It runs inside your browser: see model.js. -->
+
+  <!-- Layer 0: the stream of unreadable activity (stream.js draws here). -->
+  <canvas id="stream" aria-hidden="true"></canvas>
+
+  <!-- Layer 1: the face made of code (p5.js puts its canvas inside this div). -->
+  <div id="face-stage" aria-hidden="true"></div>
+
+  <!-- A quiet caption with the title of the piece. -->
+  <p id="caption">Exactly As Requested<br><span>a website that understands you better than you understand it</span></p>
+
+  <!-- Friendly camera invitation. Nothing is requested until the visitor clicks. -->
+  <div id="camera-box">
+    <span id="camera-note">Want me to understand you better?</span>
+    <button id="camera-button" type="button">Turn on camera</button>
+    <small id="camera-privacy">Video stays on this device. It is never uploaded or stored.</small>
+  </div>
+
+  <!-- Layer 3: the only thing on the page a person can read. -->
+  <main id="chat">
+    <header id="chat-top">
+      <span id="chat-name"><i id="online-dot"></i>Assistant</span>
+      <span id="understanding">Understanding you: 0%</span>
+    </header>
+    <div id="meter"><div id="meter-fill"></div></div>
+
+    <!-- The conversation. Questions are readable; answers are numbers. -->
+    <div id="thread" aria-live="polite"></div>
+
+    <form id="ask-form" autocomplete="off">
+      <input id="ask-input" type="text" placeholder="Ask me anything."
+             maxlength="500" aria-label="Ask me anything">
+      <button id="send-button" type="submit" aria-label="Send">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+             stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 19V5M5 12l7-7 7 7"/>
+        </svg>
+      </button>
+    </form>
+  </main>
+
+  <!-- p5.js from a CDN (exact version pinned so it never changes under us). -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <script src="stream.js"></script>
+  <!-- The AI itself. Runs in the visitor's browser (see model.js). -->
+  <script src="model.js"></script>
+  <script src="face.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

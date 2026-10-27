@@ -1,0 +1,299 @@
+/* style.css
+ *
+ * The look has two halves that should feel wrong together:
+ *   - the machine: near-black background, cold teal monospace (stream + face)
+ *   - the app: a warm, soft, rounded chat card in a friendly typeface
+ */
+
+:root {
+  /* the machine */
+  --bg: #0a0d12;
+  --machine: #8fe8d2;
+  --machine-dim: rgba(143, 232, 210, 0.55);
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  /* the friendly app */
+  --card: #f7f4ee;
+  --card-line: #e6e0d4;
+  --ink: #2b2a33;
+  --ink-soft: #6b6458;
+  --coral: #ff7a59;
+  --green: #1f8a4c;
+  --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--machine);
+  font-family: var(--mono);
+  overflow: hidden;
+}
+
+/* ---- the two background layers fill the whole window ---- */
+#stream, #face-stage {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+#stream { z-index: 0; }
+#face-stage { z-index: 1; pointer-events: none; }
+
+/* ---- caption, top left ---- */
+#caption {
+  position: fixed;
+  left: 20px;
+  top: 16px;
+  z-index: 2;
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--machine-dim);
+}
+#caption span {
+  letter-spacing: 0.04em;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* ---- camera invitation: a small friendly pill, top center ---- */
+#camera-box {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: center;
+  justify-content: center;
+  max-width: 92vw;
+  padding: 10px 12px 10px 20px;
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+#camera-box.hidden { display: none; }
+
+#camera-button {
+  font: 700 14px var(--sans);
+  color: #fff;
+  background: var(--ink);
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 18px;
+  cursor: pointer;
+}
+#camera-button:hover { background: #3d3c48; }
+#camera-button:disabled { opacity: 0.5; cursor: default; }
+
+#camera-privacy {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* ---- chat card, bottom center ---- */
+#chat {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: min(640px, 92vw);
+  padding: 18px 18px 16px;
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 28px;
+  font-family: var(--sans);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  animation: breathe 7s ease-in-out infinite;   /* very slow, barely noticeable */
+}
+@keyframes breathe {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.004); }
+}
+
+#chat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+#chat-name { font-weight: 700; display: flex; align-items: center; gap: 8px; }
+#online-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #38c172;
+  box-shadow: 0 0 0 3px rgba(56, 193, 114, 0.2);
+}
+#understanding {
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;   /* digits keep the same width while they count up */
+}
+
+#meter {
+  height: 6px;
+  background: var(--card-line);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+#meter-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--coral);
+  border-radius: 999px;
+  transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ---- the conversation ---- */
+#thread {
+  max-height: 26vh;
+  overflow-y: auto;
+  scrollbar-width: none;           /* hide the scrollbar: it should look like a calm chat app */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+#thread::-webkit-scrollbar { display: none; }
+#thread:empty { display: none; }
+
+.bubble {
+  max-width: 88%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.45;
+  word-wrap: break-word;
+  animation: pop 0.25s ease-out;
+}
+@keyframes pop {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.bubble.you {
+  align-self: flex-end;
+  background: var(--ink);
+  color: #fff;
+  border-bottom-right-radius: 6px;
+}
+.bubble.bot {
+  align-self: flex-start;
+  background: #ebe6da;
+  border-bottom-left-radius: 6px;
+}
+
+/* the answer: numbers in the machine typeface, inside the friendly bubble */
+.tokens {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #3b4a46;
+  word-break: break-word;
+}
+.tok { animation: fadein 0.35s ease-out; }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+
+/* the trace: real code that just ran, with what it returned */
+.trace {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d9d2c2;
+}
+.trace-row { margin-bottom: 5px; animation: fadein 0.3s ease-out; }
+.trace-code { color: #5b5648; word-break: break-all; }
+.trace-result { color: #1d6a58; }
+
+/* the cheerful "Done ✓" under a finished answer */
+.done {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--green);
+  animation: tada 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+@keyframes tada {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* typing dots while the AI "thinks" */
+.dots { display: inline-flex; gap: 5px; padding: 4px 2px; }
+.dots i {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--coral);
+  animation: bounce 1.1s ease-in-out infinite;
+}
+.dots i:nth-child(2) { animation-delay: 0.15s; }
+.dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+  30%           { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ---- the input ---- */
+#ask-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 20px;
+  background: #fff;
+  border: 1.5px solid var(--card-line);
+  border-radius: 999px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+#ask-form:focus-within {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 4px rgba(255, 122, 89, 0.18);
+}
+#ask-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: 400 17px var(--sans);
+  color: var(--ink);
+}
+#ask-input::placeholder { color: #9a937f; }
+
+#send-button {
+  flex: none;
+  width: 40px; height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--coral);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.12s;
+}
+#send-button:hover { transform: scale(1.06); }
+#send-button:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+/* ---- visitors who ask their system for less motion get a calm page ---- */
+@media (prefers-reduced-motion: reduce) {
+  #chat { animation: none; }
+  .bubble, .tok, .done { animation: none; }
+}
