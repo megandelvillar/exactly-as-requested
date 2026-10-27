@@ -6,6 +6,11 @@ A public website that looks alive, full of streams of unreadable code and number
 Ask it anything. It answers correctly, but shows the answer as **token IDs**, the numbers language models work with.
 Meanwhile your face slowly appears, built out of the page's own code, and gets clearer with every message.
 
+**Try it live:** https://megandelvillar.github.io/exactly-as-requested/
+(Chrome or Safari on a laptop. The first visit downloads the AI, about 500 MB, so give it a few minutes.)
+
+**Code:** https://github.com/megandelvillar/exactly-as-requested
+
 **There is no server and no API key.** The AI is a small open model that runs inside the visitor's own browser.
 
 ## What is in the folder
@@ -43,6 +48,8 @@ Add `?mock` to the address (http://localhost:3000/?mock) to skip the download an
 ## Deploy for free (static hosting)
 
 Because there is no backend, any free static host works. The folder is the site.
+
+**How this project was deployed:** the folder is a public GitHub repository, and GitHub Pages serves the `main` branch from the root folder (Settings, Pages). The live address is https://megandelvillar.github.io/exactly-as-requested/ and it uses `https`, which the camera needs. To update the site, commit and push to `main`; Pages republishes in a minute or two.
 
 - **GitHub Pages:** push the folder to a GitHub repository, then Settings, Pages, deploy from the `main` branch, root folder. You get an `https://...github.io/...` address, which makes the camera work.
 - **Vercel, Netlify or Cloudflare Pages:** also free; import the repository and leave every setting empty (no framework, no build command).
